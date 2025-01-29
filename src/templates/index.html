@@ -1,0 +1,86 @@
+<!-- src/templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Model Prediction</title>
+    <!-- <link rel="stylesheet" href="css/styles.css"> -->
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 500px;
+            margin: auto;
+            text-align: center;
+        }
+
+        input {
+            margin: 10px;
+            padding: 8px;
+            width: 100%;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Machine Learning Model Prediction</h1>
+
+    <form id="predictionForm">
+        <input type="number" id="Pclass" placeholder="Pclass" required><br>
+        <input type="number" id="Sex" placeholder="Sex (1 = male, 0 = female)" required><br>
+        <input type="number" id="Age" placeholder="Age" required><br>
+        <input type="number" id="SibSp" placeholder="SibSp" required><br>
+        <input type="number" id="Parch" placeholder="Parch" required><br>
+        <input type="number" id="Fare" placeholder="Fare" required><br>
+        <input type="number" id="Embarked" placeholder="Embarked (0 = C, 1 = Q, 2 = S)" required><br>
+        <button type="submit">Submit</button>
+    </form>
+
+
+    <h2>Prediction: <span id="predictionResult"></span></h2>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const data = {
+                Pclass: parseInt(document.getElementById('Pclass').value),
+                Sex: parseInt(document.getElementById('Sex').value),
+                Age: parseInt(document.getElementById('Age').value),
+                SibSp: parseInt(document.getElementById('SibSp').value),
+                Parch: parseInt(document.getElementById('Parch').value),
+                Fare: parseFloat(document.getElementById('Fare').value),
+                Embarked: parseInt(document.getElementById('Embarked').value)
+            };
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify([data])
+            });
+
+            const result = await response.json();
+            document.getElementById('predictionResult').innerText = result.prediction[0] === 1 ? "Survived" : "Not Survived";
+        });
+    </script>
+</body>
+
+</html>
